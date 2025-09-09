@@ -14,93 +14,13 @@ export type Database = {
   }
   public: {
     Tables: {
-      notifications: {
-        Row: {
-          created_at: string | null
-          id: number
-          message: string | null
-          part_id: number | null
-          status: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: number
-          message?: string | null
-          part_id?: number | null
-          status?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: number
-          message?: string | null
-          part_id?: number | null
-          status?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "notifications_part_id_fkey"
-            columns: ["part_id"]
-            isOneToOne: false
-            referencedRelation: "parts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      parts: {
-        Row: {
-          id: number
-          last_updated: string | null
-          min_threshold: number
-          part_name: string
-          part_number: string | null
-          quantity: number
-          supplier_contact: string | null
-          supplier_name: string | null
-        }
-        Insert: {
-          id?: number
-          last_updated?: string | null
-          min_threshold: number
-          part_name: string
-          part_number?: string | null
-          quantity: number
-          supplier_contact?: string | null
-          supplier_name?: string | null
-        }
-        Update: {
-          id?: number
-          last_updated?: string | null
-          min_threshold?: number
-          part_name?: string
-          part_number?: string | null
-          quantity?: number
-          supplier_contact?: string | null
-          supplier_name?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      check_stock_levels: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      get_low_stock_parts: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          id: number
-          last_updated: string
-          min_threshold: number
-          part_name: string
-          part_number: string
-          quantity: number
-          supplier_contact: string
-          supplier_name: string
-        }[]
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
