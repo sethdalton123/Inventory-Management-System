@@ -33,7 +33,7 @@ export const useInventory = () => {
         .from('parts')
         .select('*')
         .order('part_name');
-      
+
       if (error) throw error;
       setParts(data || []);
     } catch (error) {
@@ -53,7 +53,7 @@ export const useInventory = () => {
         .select('*')
         .eq('status', 'unread')
         .order('created_at', { ascending: false });
-      
+
       if (error) throw error;
       setNotifications(data || []);
     } catch (error) {
@@ -68,17 +68,17 @@ export const useInventory = () => {
         .insert(partData)
         .select()
         .single();
-      
+
       if (error) throw error;
-      
+
       await fetchParts();
       await checkStockLevels();
-      
+
       toast({
         title: "Success",
         description: "Part added successfully"
       });
-      
+
       return data;
     } catch (error) {
       console.error('Error adding part:', error);
@@ -97,12 +97,12 @@ export const useInventory = () => {
         .from('parts')
         .update(partData)
         .eq('id', id);
-      
+
       if (error) throw error;
-      
+
       await fetchParts();
       await checkStockLevels();
-      
+
       toast({
         title: "Success",
         description: "Part updated successfully"
@@ -124,12 +124,12 @@ export const useInventory = () => {
         .from('parts')
         .delete()
         .eq('id', id);
-      
+
       if (error) throw error;
-      
+
       await fetchParts();
       await fetchNotifications();
-      
+
       toast({
         title: "Success",
         description: "Part deleted successfully"
@@ -146,16 +146,25 @@ export const useInventory = () => {
 
   const updateStock = async (id: number, quantity: number) => {
     try {
+      if (quantity < 0) {
+        toast({
+          title: "Error",
+          description: "Stock cannot be negative",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const { error } = await supabase
         .from('parts')
         .update({ quantity })
         .eq('id', id);
-      
+
       if (error) throw error;
-      
+
       await fetchParts();
       await checkStockLevels();
-      
+
       toast({
         title: "Success",
         description: "Stock updated successfully"
@@ -197,7 +206,7 @@ export const useInventory = () => {
         .from('notifications')
         .update({ status: 'read' })
         .eq('id', id);
-      
+
       if (error) throw error;
       await fetchNotifications();
     } catch (error) {
@@ -211,7 +220,7 @@ export const useInventory = () => {
       await Promise.all([fetchParts(), fetchNotifications()]);
       setLoading(false);
     };
-    
+
     loadData();
   }, []);
 

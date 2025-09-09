@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -9,10 +9,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Edit, Trash2, Minus, Plus } from 'lucide-react';
-import { Part } from '@/hooks/useInventory';
+} from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Edit, Trash2, Minus, Plus } from "lucide-react";
+import { Part } from "@/hooks/useInventory";
 
 interface PartsTableProps {
   parts: Part[];
@@ -21,23 +21,28 @@ interface PartsTableProps {
   onUpdateStock: (id: number, quantity: number) => void;
 }
 
-export const PartsTable = ({ parts, onEditPart, onDeletePart, onUpdateStock }: PartsTableProps) => {
+export const PartsTable = ({
+  parts,
+  onEditPart,
+  onDeletePart,
+  onUpdateStock,
+}: PartsTableProps) => {
   const [stockUpdates, setStockUpdates] = useState<{ [key: number]: number }>({});
 
   const handleStockChange = (partId: number, change: number) => {
-    const part = parts.find(p => p.id === partId);
+    const part = parts.find((p) => p.id === partId);
     if (!part) return;
-    
+
     const currentStock = stockUpdates[partId] ?? part.quantity;
     const newStock = Math.max(0, currentStock + change);
-    setStockUpdates(prev => ({ ...prev, [partId]: newStock }));
+    setStockUpdates((prev) => ({ ...prev, [partId]: newStock }));
   };
 
   const handleStockUpdate = (partId: number) => {
     const newStock = stockUpdates[partId];
     if (newStock !== undefined) {
       onUpdateStock(partId, newStock);
-      setStockUpdates(prev => {
+      setStockUpdates((prev) => {
         const updated = { ...prev };
         delete updated[partId];
         return updated;
@@ -47,11 +52,11 @@ export const PartsTable = ({ parts, onEditPart, onDeletePart, onUpdateStock }: P
 
   const getStockStatus = (quantity: number, threshold: number) => {
     if (quantity <= threshold) {
-      return { label: 'Low Stock', variant: 'destructive' as const };
+      return { label: "Low Stock", variant: "destructive" as const };
     } else if (quantity <= threshold * 1.5) {
-      return { label: 'Warning', variant: 'secondary' as const };
+      return { label: "Warning", variant: "secondary" as const };
     }
-    return { label: 'In Stock', variant: 'default' as const };
+    return { label: "In Stock", variant: "default" as const };
   };
 
   return (
@@ -79,11 +84,11 @@ export const PartsTable = ({ parts, onEditPart, onDeletePart, onUpdateStock }: P
                 const currentStock = stockUpdates[part.id] ?? part.quantity;
                 const hasStockUpdate = stockUpdates[part.id] !== undefined;
                 const status = getStockStatus(part.quantity, part.min_threshold);
-                
+
                 return (
                   <TableRow key={part.id}>
                     <TableCell className="font-medium">{part.part_name}</TableCell>
-                    <TableCell>{part.part_number || '-'}</TableCell>
+                    <TableCell>{part.part_number || "-"}</TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
                         <Button
@@ -97,10 +102,13 @@ export const PartsTable = ({ parts, onEditPart, onDeletePart, onUpdateStock }: P
                         <Input
                           type="number"
                           value={currentStock}
-                          onChange={(e) => setStockUpdates(prev => ({ 
-                            ...prev, 
-                            [part.id]: parseInt(e.target.value) || 0 
-                          }))}
+                          onChange={(e) => {
+                            const value = Number(e.target.value);
+                            setStockUpdates((prev) => ({
+                              ...prev,
+                              [part.id]: isNaN(value) ? 0 : value,
+                            }));
+                          }}
                           className="w-20 text-center"
                           min="0"
                         />
@@ -126,8 +134,8 @@ export const PartsTable = ({ parts, onEditPart, onDeletePart, onUpdateStock }: P
                     <TableCell>
                       <Badge variant={status.variant}>{status.label}</Badge>
                     </TableCell>
-                    <TableCell>{part.supplier_name || '-'}</TableCell>
-                    <TableCell>{part.supplier_contact || '-'}</TableCell>
+                    <TableCell>{part.supplier_name || "-"}</TableCell>
+                    <TableCell>{part.supplier_contact || "-"}</TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
                         <Button
@@ -151,6 +159,7 @@ export const PartsTable = ({ parts, onEditPart, onDeletePart, onUpdateStock }: P
               })}
             </TableBody>
           </Table>
+
           {parts.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               No parts found. Add your first part to get started.
